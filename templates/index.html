@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Pulse</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <div class="app-shell">
+        <!-- Sidebar Navigation (Desktop) / Top bar (Mobile) -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-wrapper">
+                    <!-- Custom SVG representing BigQuery/Google Cloud databases -->
+                    <svg class="bq-logo" viewBox="0 0 24 24" width="28" height="28">
+                        <path fill="#4285F4" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>BigQuery</h1>
+                    <span class="subtitle">Release Pulse</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button id="refresh-btn" class="btn btn-primary" title="Refresh Release Notes">
+                    <svg id="refresh-icon" class="icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <!-- Left panel: Search, filters, timeline list -->
+            <section class="feed-section">
+                <div class="controls-card">
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18">
+                            <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search release notes by keyword...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <span class="filter-label">Filter Type:</span>
+                        <div class="filter-chips" id="filter-chips">
+                            <button class="chip active" data-filter="all">All</button>
+                            <button class="chip" data-filter="Feature">Features</button>
+                            <button class="chip" data-filter="Issue">Issues</button>
+                            <button class="chip" data-filter="Announcement">Announcements</button>
+                            <button class="chip" data-filter="Deprecation">Deprecations</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed loading state -->
+                <div id="feed-loader" class="feed-loader hidden">
+                    <div class="spinner"></div>
+                    <p>Fetching latest release notes from Google Cloud...</p>
+                </div>
+
+                <!-- Error Toast/Message -->
+                <div id="error-message" class="error-container hidden">
+                    <div class="error-card">
+                        <svg class="error-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        <div class="error-content">
+                            <h3>Unable to retrieve notes</h3>
+                            <p id="error-text">An error occurred while communicating with the server.</p>
+                            <button id="retry-btn" class="btn btn-secondary btn-sm">Try Again</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Container -->
+                <div id="timeline" class="timeline">
+                    <!-- Dynamic timeline entries go here -->
+                </div>
+            </section>
+
+            <!-- Right panel: Twitter Composer and Preview -->
+            <aside class="composer-section">
+                <!-- Composer Placeholder State -->
+                <div id="composer-placeholder" class="composer-placeholder">
+                    <div class="placeholder-art">
+                        <svg class="x-logo-large" viewBox="0 0 24 24" width="48" height="48">
+                            <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </div>
+                    <h2>Share an Update</h2>
+                    <p>Select a specific release note card from the feed to draft, preview, and customize a tweet for X (formerly Twitter).</p>
+                </div>
+
+                <!-- Composer Active State -->
+                <div id="composer-active" class="composer-active hidden">
+                    <div class="panel-header">
+                        <h2>Tweet Composer</h2>
+                        <button id="close-composer" class="btn-close" title="Deselect update">✕</button>
+                    </div>
+
+                    <!-- Live High-Fidelity Twitter / X Mockup Card -->
+                    <div class="x-card-mockup">
+                        <div class="x-card-header">
+                            <div class="x-avatar">
+                                <svg viewBox="0 0 24 24" width="40" height="40" class="avatar-svg">
+                                    <circle cx="12" cy="12" r="12" fill="#1a73e8"/>
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#ffffff" style="display:none;"/>
+                                    <text x="50%" y="55%" fill="#ffffff" font-size="10" font-family="Inter, sans-serif" font-weight="bold" alignment-baseline="middle" text-anchor="middle">GCP</text>
+                                </svg>
+                            </div>
+                            <div class="x-user-details">
+                                <span class="x-display-name">Google Cloud Release Notes</span>
+                                <span class="x-handle">@GCPReleasePulse</span>
+                            </div>
+                            <div class="x-more-menu">•••</div>
+                        </div>
+
+                        <div class="x-card-body">
+                            <p id="x-tweet-preview-text" class="x-tweet-text">
+                                <!-- Live text preview goes here -->
+                            </p>
+                            
+                            <!-- Fake link preview card inside mockup -->
+                            <div class="x-link-preview">
+                                <div class="x-link-img">
+                                    <div class="bq-logo-large">
+                                        <svg viewBox="0 0 24 24" width="36" height="36">
+                                            <path fill="#ffffff" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                        </svg>
+                                    </div>
+                                    <span>Google Cloud Feed</span>
+                                </div>
+                                <div class="x-link-info">
+                                    <span class="x-link-domain">docs.cloud.google.com</span>
+                                    <span class="x-link-title">BigQuery - Release notes | Google Cloud</span>
+                                    <span class="x-link-desc">Review BigQuery updates, new features, announcements, deprecations, and bug fixes.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="x-card-footer">
+                            <span class="x-time" id="x-tweet-time">11:15 AM · Jun 24, 2026</span>
+                            <span class="x-stats">· <strong>1.2K</strong> Views</span>
+                        </div>
+                        
+                        <div class="x-card-actions">
+                            <span class="x-action" title="Reply"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.246c4.42 0 8.004 3.58 8.004 8 0 4.42-3.584 8-8.004 8h-4.246c-.457-.005-.907-.06-1.349-.16l-3.32 2.82c-.6.51-1.53-.02-1.42-.8l.45-3.23c-2.31-1.35-3.72-3.8-3.72-6.63zm8.005-6c-3.317 0-6.004 2.69-6.004 6 0 2.3 1.25 4.38 3.253 5.43.34.18.52.54.47.92l-.32 2.3 2.37-2.02c.26-.22.6-.32.94-.3h3.535c3.317 0 6.004-2.69 6.004-6s-2.687-6-6.004-6h-4.246z"/></svg></span>
+                            <span class="x-action" title="Repost"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4.5 3.88l4.432 4.14-1.364 1.46L4.5 6.55V17c0 1.1.9 2 2 2h4v2H6.5c-2.21 0-4-1.79-4-4V6.55L.932 9.48-.432 8.02 4.5 3.88zM22.5 17c0 2.21-1.79 4-4 4h-4v-2h4c1.1 0 2-.9 2-2V7.45l-1.932 2.93-1.364-1.46L19.5 3.88l4.432 4.14-1.364 1.46L22.5 7.45V17z"/></svg></span>
+                            <span class="x-action" title="Like"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.725c-1.847 0-3.404 1.704-3.404 3.753 0 5.168 6.16 10.839 8.05 11.13 1.89-.292 8.05-5.963 8.05-11.13 0-2.05-1.557-3.753-3.404-3.753-1.73 0-3.005 1.73-3.644 2.94-.093.175-.27.284-.468.285-.198 0-.376-.108-.47-.283-.637-1.21-1.91-2.94-3.64-2.94z"/></svg></span>
+                            <span class="x-action" title="Bookmark"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v16.94c0 .54-.62.85-1.07.53L12 17.51l-6.93 4.46c-.45.29-1.07-.02-1.07-.53V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-3.87 6 3.87V4.5c0-.28-.224-.5-.5-.5h-11z"/></svg></span>
+                        </div>
+                    </div>
+
+                    <!-- Composer Editor controls -->
+                    <div class="composer-controls">
+                        <label for="tweet-textarea">Customize Tweet Text:</label>
+                        <textarea id="tweet-textarea" rows="5" maxlength="500" placeholder="What's happening?"></textarea>
+                        
+                        <div class="composer-status">
+                            <span id="char-counter" class="char-counter">0 / 280</span>
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="24" height="24">
+                                    <circle class="progress-ring__circle-bg" stroke="#1f2937" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" />
+                                    <circle id="char-progress" class="progress-ring__circle" stroke="#1d9bf0" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="composer-actions">
+                            <button id="tweet-btn" class="btn btn-tweet">
+                                <svg class="x-logo-small" viewBox="0 0 24 24" width="14" height="14">
+                                    <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                                <span>Post to X / Twitter</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Script Application -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
