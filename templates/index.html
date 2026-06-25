@@ -79,8 +79,18 @@
 
                 <!-- Feed loading state -->
                 <div id="feed-loader" class="feed-loader hidden">
-                    <div class="spinner"></div>
-                    <p>Fetching latest release notes from Google Cloud...</p>
+                    <div class="skeleton-timeline">
+                        <div class="skeleton-node">
+                            <span class="skeleton-marker"></span>
+                            <div class="skeleton-card"></div>
+                        </div>
+                        <div class="skeleton-node">
+                            <span class="skeleton-marker"></span>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                        </div>
+                    </div>
+                    <p class="loader-text">Fetching latest release notes from Google Cloud...</p>
                 </div>
 
                 <!-- Error Toast/Message -->
@@ -182,6 +192,7 @@
                         <textarea id="tweet-textarea" rows="5" maxlength="500" placeholder="What's happening?"></textarea>
                         
                         <div class="composer-status">
+                            <button id="auto-fit-btn" class="btn-link hidden" title="Trim draft back to 280 characters automatically">Auto-Fit Text</button>
                             <span id="char-counter" class="char-counter">0 / 280</span>
                             <div class="progress-ring-container">
                                 <svg class="progress-ring" width="24" height="24">

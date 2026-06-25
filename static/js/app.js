@@ -30,6 +30,7 @@ const tweetTextarea = document.getElementById('tweet-textarea');
 const charCounter = document.getElementById('char-counter');
 const charProgress = document.getElementById('char-progress');
 const tweetBtn = document.getElementById('tweet-btn');
+const autoFitBtn = document.getElementById('auto-fit-btn');
 
 // Constants
 const TWITTER_CHAR_LIMIT = 280;
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tweetTextarea.addEventListener('input', handleTweetTextChange);
     tweetBtn.addEventListener('click', publishTweet);
     exportCsvBtn.addEventListener('click', exportToCSV);
+    autoFitBtn.addEventListener('click', autoFitTweet);
 
     themeToggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('light-theme');
@@ -203,6 +205,11 @@ function renderTimeline() {
                 card.classList.add('selected');
             }
 
+            // Keyboard accessibility attributes
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `BigQuery release update: ${update.type} on ${entry.date}`);
+
             // Map type to css badge class
             const badgeClass = getBadgeClass(update.type);
 
@@ -244,6 +251,14 @@ function renderTimeline() {
                 selectNote(update, entry);
             });
 
+            // Keyboard accessibility navigation handler
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault(); // Stop page scrolling on space
+                    selectNote(update, entry);
+                }
+            });
+
             cardsContainer.appendChild(card);
         });
 
@@ -258,8 +273,10 @@ function renderTimeline() {
                     <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
                 <p>No results match your search or filter criteria.</p>
+                <button id="reset-filters-btn" class="btn btn-secondary btn-sm" style="margin-top: 0.75rem;">Clear Search & Filters</button>
             </div>
         `;
+        document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
     }
 }
 
@@ -306,6 +323,11 @@ function selectNote(update, entry) {
 
     // Update Counter & UI
     updateTweetUI(tweetDraft);
+
+    // Smooth scroll to composer on smaller screens (collapses vertically)
+    if (window.innerWidth <= 1024) {
+        composerActive.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // Deselect selected card
@@ -377,12 +399,15 @@ function updateTweetUI(text) {
     if (length > TWITTER_CHAR_LIMIT) {
         charCounter.className = 'char-counter error';
         tweetBtn.disabled = true;
+        autoFitBtn.classList.remove('hidden');
     } else if (length >= TWITTER_CHAR_LIMIT - 20) {
         charCounter.className = 'char-counter warning';
         tweetBtn.disabled = false;
+        autoFitBtn.classList.add('hidden');
     } else {
         charCounter.className = 'char-counter';
         tweetBtn.disabled = false;
+        autoFitBtn.classList.add('hidden');
     }
 
     // Update SVG Progress Ring
@@ -526,4 +551,46 @@ function exportToCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// Reset filters to default state (triggered by empty search states)
+function resetFilters() {
+    searchInput.value = '';
+    searchQuery = '';
+    
+    const activeChip = filterChips.querySelector('.chip.active');
+    if (activeChip) activeChip.classList.remove('active');
+    filterChips.querySelector('[data-filter="all"]').classList.add('active');
+    currentFilter = 'all';
+    
+    renderTimeline();
+}
+
+// Auto-Fit tweet contents: trims user text down so it fits under the 280-char limit
+function autoFitTweet() {
+    if (!selectedNote) return;
+    const text = tweetTextarea.value;
+    
+    // Find links in the draft (t.co wrap counts as exactly 23 characters)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = text.match(urlRegex);
+    
+    if (urls && urls.length > 0) {
+        const primaryUrl = urls[0];
+        // Split the draft, removing primary URL
+        let plainText = text.replace(primaryUrl, '').trim();
+        
+        // Allowed length: limit - link length - space - ellipsis
+        const maxPlainLength = TWITTER_CHAR_LIMIT - T_CO_URL_LENGTH - 2; // (1 space + 1 ellipsis dot gap)
+        
+        if (plainText.length > maxPlainLength) {
+            plainText = plainText.slice(0, maxPlainLength - 3).trim() + '...';
+        }
+        tweetTextarea.value = `${plainText} ${primaryUrl}`;
+    } else {
+        // Simple string slice
+        tweetTextarea.value = text.slice(0, TWITTER_CHAR_LIMIT);
+    }
+    
+    updateTweetUI(tweetTextarea.value);
 }
