@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,45 +8,83 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Main Style Sheet -->
+    
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        google: {
+                            blue: '#4285f4',
+                            red: '#ea4335',
+                            yellow: '#fbbc05',
+                            green: '#34a853',
+                        },
+                        x: {
+                            blue: '#1d9bf0',
+                            'blue-hover': '#1a8cd8',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'lg': '12px',
+                        'xl': '16px',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Local Animation / Progress Ring Overrides -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="glow-bg"></div>
-    
-    <div class="app-shell">
-        <!-- Sidebar Navigation (Desktop) / Top bar (Mobile) -->
-        <header class="app-header">
-            <div class="brand">
-                <div class="logo-wrapper">
-                    <!-- Custom SVG representing BigQuery/Google Cloud databases -->
-                    <svg class="bq-logo" viewBox="0 0 24 24" width="28" height="28">
-                        <path fill="#4285F4" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 antialiased">
+    <!-- Glowing Ambient Background Effects (Hidden in Light Mode) -->
+    <div class="fixed top-[-200px] left-[20%] w-[60vw] h-[60vw] bg-radial-gradient from-blue-500/10 dark:from-google-blue/10 to-transparent blur-[100px] pointer-events-none z-[-1] hidden dark:block"></div>
+    <div class="fixed bottom-[-200px] right-[10%] w-[40vw] h-[40vw] bg-radial-gradient from-purple-500/5 dark:from-purple-500/5 to-transparent blur-[80px] pointer-events-none z-[-1] hidden dark:block"></div>
+
+    <div class="w-full max-w-[2560px] mx-auto flex flex-col flex-1 min-h-screen">
+        <!-- Sticky Header -->
+        <header class="flex justify-between items-center py-4 px-6 md:px-8 border-b border-slate-200 dark:border-slate-900 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-br from-blue-500/10 to-blue-500/20 border border-blue-500/30 rounded-xl p-2 flex items-center justify-center shadow-sm">
+                    <svg class="text-google-blue filter drop-shadow-[0_0_8px_rgba(66,133,244,0.4)]" viewBox="0 0 24 24" width="26" height="26">
+                        <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <h1>BigQuery</h1>
-                    <span class="subtitle">Release Pulse</span>
+                <div class="leading-tight">
+                    <h1 class="text-base md:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">BigQuery</h1>
+                    <span class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Release Pulse</span>
                 </div>
             </div>
             
-            <div class="header-actions">
-                <button id="theme-toggle-btn" class="btn btn-secondary" title="Toggle Light/Dark Theme">
-                    <svg id="theme-icon-dark" class="icon" viewBox="0 0 24 24" width="18" height="18">
+            <div class="flex items-center gap-2">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle-btn" class="p-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg cursor-pointer transition-all duration-200" title="Toggle Light/Dark Theme">
+                    <svg id="theme-icon-dark" class="icon block dark:hidden" viewBox="0 0 24 24" width="18" height="18">
                         <path fill="currentColor" d="M12 3c.132 0 .263 0 .393.007a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 2.992z"/>
                     </svg>
-                    <svg id="theme-icon-light" class="icon hidden" viewBox="0 0 24 24" width="18" height="18">
+                    <svg id="theme-icon-light" class="icon hidden dark:block" viewBox="0 0 24 24" width="18" height="18">
                         <path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 16a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1zM5.636 4.222a1 1 0 0 1 1.414 0l1.414 1.414a1 1 0 1 1-1.414 1.414L5.636 5.636a1 1 0 0 1 0-1.414zm11.314 11.314a1 1 0 0 1 1.414 0l1.414 1.414a1 1 0 1 1-1.414 1.414l-1.414-1.414a1 1 0 0 1 0-1.414zM2 12a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1zm16 0a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zM5.636 19.778a1 1 0 0 1 0-1.414l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-1.414 0zm11.314-11.314a1 1 0 0 1 0-1.414l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-1.414 0z"/>
                     </svg>
                 </button>
-                <button id="export-csv-btn" class="btn btn-secondary" title="Export current notes to CSV">
-                    <svg class="icon" viewBox="0 0 24 24" width="18" height="18">
+                
+                <!-- CSV Export -->
+                <button id="export-csv-btn" class="flex items-center gap-2 p-2 px-3 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs md:text-sm rounded-lg cursor-pointer transition-all duration-200" title="Export current notes to CSV">
+                    <svg class="text-slate-500" viewBox="0 0 24 24" width="18" height="18">
                         <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                     </svg>
-                    <span>Export CSV</span>
+                    <span class="hidden sm:inline">Export CSV</span>
                 </button>
-                <button id="refresh-btn" class="btn btn-primary" title="Refresh Release Notes">
-                    <svg id="refresh-icon" class="icon" viewBox="0 0 24 24" width="18" height="18">
+
+                <!-- Refresh Button -->
+                <button id="refresh-btn" class="flex items-center gap-2 p-2 px-3 border border-transparent bg-google-blue hover:bg-blue-600 text-white font-semibold text-xs md:text-sm rounded-lg cursor-pointer shadow-md hover:shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-200" title="Refresh Release Notes">
+                    <svg id="refresh-icon" viewBox="0 0 24 24" width="18" height="18">
                         <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
                     </svg>
                     <span>Refresh</span>
@@ -54,157 +92,165 @@
             </div>
         </header>
 
-        <div class="app-layout">
-            <!-- Left panel: Search, filters, timeline list -->
-            <section class="feed-section">
-                <div class="controls-card">
-                    <div class="search-box">
-                        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18">
+        <!-- Responsive Layout Wrapper -->
+        <!-- Responsive layout limits widths at very high resolutions (2k, 4k) for optimal legibility -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 flex-1 overflow-hidden h-[calc(100vh-73px)] lg:h-[calc(100vh-73px)]">
+            <!-- Left panel: Feed -->
+            <section class="lg:col-span-7 xl:col-span-8 overflow-y-auto p-4 md:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-900 scroll-smooth">
+                <!-- Search & Filters Container -->
+                <div class="bg-white/40 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 md:p-5 mb-6 md:mb-8 backdrop-blur-md flex flex-col gap-4 shadow-sm">
+                    <div class="relative w-full">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" viewBox="0 0 24 24" width="18" height="18">
                             <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                         </svg>
-                        <input type="text" id="search-input" placeholder="Search release notes by keyword...">
+                        <input type="text" id="search-input" placeholder="Search release notes by keyword..." class="w-full bg-slate-100/50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-xl py-3 pl-12 pr-4 text-sm outline-none text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-google-blue focus:ring-1 focus:ring-google-blue/30 transition-all duration-200">
                     </div>
                     
-                    <div class="filter-group">
-                        <span class="filter-label">Filter Type:</span>
-                        <div class="filter-chips" id="filter-chips">
-                            <button class="chip active" data-filter="all">All</button>
-                            <button class="chip" data-filter="Feature">Features</button>
-                            <button class="chip" data-filter="Issue">Issues</button>
-                            <button class="chip" data-filter="Announcement">Announcements</button>
-                            <button class="chip" data-filter="Deprecation">Deprecations</button>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 sm:w-24">Filter Type:</span>
+                        <div class="flex gap-1.5 flex-wrap" id="filter-chips">
+                            <button class="chip px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white cursor-pointer active transition-all duration-200" data-filter="all">All</button>
+                            <button class="chip px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-all duration-200" data-filter="Feature">Features</button>
+                            <button class="chip px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-all duration-200" data-filter="Issue">Issues</button>
+                            <button class="chip px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-all duration-200" data-filter="Announcement">Announcements</button>
+                            <button class="chip px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-all duration-200" data-filter="Deprecation">Deprecations</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Feed loading state -->
-                <div id="feed-loader" class="feed-loader hidden">
-                    <div class="skeleton-timeline">
-                        <div class="skeleton-node">
-                            <span class="skeleton-marker"></span>
-                            <div class="skeleton-card"></div>
+                <!-- Feed loading state (Animated Skeleton Shimmer) -->
+                <div id="feed-loader" class="flex flex-col gap-6 py-8 hidden">
+                    <div class="skeleton-timeline flex flex-col gap-8">
+                        <div class="skeleton-node pl-8 relative">
+                            <span class="skeleton-marker absolute left-0 top-[6px] w-[14px] h-[14px] rounded-full bg-slate-200 dark:bg-slate-800"></span>
+                            <div class="skeleton-card h-[130px] rounded-xl border border-slate-200 dark:border-slate-800"></div>
                         </div>
-                        <div class="skeleton-node">
-                            <span class="skeleton-marker"></span>
-                            <div class="skeleton-card"></div>
-                            <div class="skeleton-card"></div>
+                        <div class="skeleton-node pl-8 relative">
+                            <span class="skeleton-marker absolute left-0 top-[6px] w-[14px] h-[14px] rounded-full bg-slate-200 dark:bg-slate-800"></span>
+                            <div class="flex flex-col gap-4">
+                                <div class="skeleton-card h-[130px] rounded-xl border border-slate-200 dark:border-slate-800"></div>
+                                <div class="skeleton-card h-[100px] rounded-xl border border-slate-200 dark:border-slate-800"></div>
+                            </div>
                         </div>
                     </div>
-                    <p class="loader-text">Fetching latest release notes from Google Cloud...</p>
+                    <p class="loader-text text-sm font-semibold text-slate-400 dark:text-slate-500 text-center">Fetching latest release notes from Google Cloud...</p>
                 </div>
 
-                <!-- Error Toast/Message -->
-                <div id="error-message" class="error-container hidden">
-                    <div class="error-card">
-                        <svg class="error-icon" viewBox="0 0 24 24" width="24" height="24">
+                <!-- Error Message -->
+                <div id="error-message" class="py-4 hidden">
+                    <div class="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-2xl p-6 flex gap-4 items-start">
+                        <svg class="text-red-500 flex-shrink-0" viewBox="0 0 24 24" width="24" height="24">
                             <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
-                        <div class="error-content">
-                            <h3>Unable to retrieve notes</h3>
-                            <p id="error-text">An error occurred while communicating with the server.</p>
-                            <button id="retry-btn" class="btn btn-secondary btn-sm">Try Again</button>
+                        <div class="flex-1">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Unable to retrieve notes</h3>
+                            <p id="error-text" class="text-sm text-slate-600 dark:text-slate-400 mb-4">An error occurred while communicating with the server.</p>
+                            <button id="retry-btn" class="btn border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs p-2 px-4 rounded-lg cursor-pointer text-slate-700 dark:text-slate-300">Try Again</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Timeline Container -->
-                <div id="timeline" class="timeline">
-                    <!-- Dynamic timeline entries go here -->
+                <div id="timeline" class="timeline relative pl-8 border-l border-slate-200 dark:border-slate-900 ml-4 py-2">
+                    <!-- Dynamic entries go here -->
                 </div>
             </section>
 
-            <!-- Right panel: Twitter Composer and Preview -->
-            <aside class="composer-section">
+            <!-- Right panel: Composer -->
+            <aside class="lg:col-span-5 xl:col-span-4 bg-slate-50 dark:bg-slate-950 lg:bg-slate-50/50 dark:lg:bg-[#090d16]/30 overflow-y-auto relative">
                 <!-- Composer Placeholder State -->
-                <div id="composer-placeholder" class="composer-placeholder">
-                    <div class="placeholder-art">
-                        <svg class="x-logo-large" viewBox="0 0 24 24" width="48" height="48">
+                <div id="composer-placeholder" class="flex flex-col items-center justify-center h-full p-8 text-center text-slate-500 dark:text-slate-400 min-h-[300px]">
+                    <div class="mb-5 text-slate-400 dark:text-slate-600 p-6 rounded-full bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-inner">
+                        <svg viewBox="0 0 24 24" width="40" height="40">
                             <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
                     </div>
-                    <h2>Share an Update</h2>
-                    <p>Select a specific release note card from the feed to draft, preview, and customize a tweet for X (formerly Twitter).</p>
+                    <h2 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-2">Share an Update</h2>
+                    <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-[280px] leading-relaxed">Select a specific release note card from the feed to draft, preview, and customize a tweet for X (formerly Twitter).</p>
                 </div>
 
                 <!-- Composer Active State -->
-                <div id="composer-active" class="composer-active hidden">
-                    <div class="panel-header">
-                        <h2>Tweet Composer</h2>
-                        <button id="close-composer" class="btn-close" title="Deselect update">✕</button>
+                <div id="composer-active" class="p-6 md:p-8 flex flex-col gap-6 hidden">
+                    <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-900 pb-4">
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-900 dark:text-white">Tweet Composer</h2>
+                        <button id="close-composer" class="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md cursor-pointer transition-all" title="Deselect update">✕</button>
                     </div>
 
-                    <!-- Live High-Fidelity Twitter / X Mockup Card -->
-                    <div class="x-card-mockup">
-                        <div class="x-card-header">
-                            <div class="x-avatar">
-                                <svg viewBox="0 0 24 24" width="40" height="40" class="avatar-svg">
+                    <!-- Live Twitter Mockup -->
+                    <div class="bg-black border border-[#2f3336] rounded-2xl p-4 md:p-5 text-[#e7e9ea] font-sans shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="flex-shrink-0">
+                                <svg viewBox="0 0 24 24" width="40" height="40" class="rounded-full">
                                     <circle cx="12" cy="12" r="12" fill="#1a73e8"/>
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#ffffff" style="display:none;"/>
-                                    <text x="50%" y="55%" fill="#ffffff" font-size="10" font-family="Inter, sans-serif" font-weight="bold" alignment-baseline="middle" text-anchor="middle">GCP</text>
+                                    <text x="50%" y="55%" fill="#ffffff" font-size="9" font-family="Inter, sans-serif" font-weight="extrabold" alignment-baseline="middle" text-anchor="middle">GCP</text>
                                 </svg>
                             </div>
-                            <div class="x-user-details">
-                                <span class="x-display-name">Google Cloud Release Notes</span>
-                                <span class="x-handle">@GCPReleasePulse</span>
+                            <div class="flex flex-col leading-tight flex-1">
+                                <span class="font-bold text-sm md:text-base text-white">Google Cloud Release Notes</span>
+                                <span class="text-xs text-[#71767b]">@GCPReleasePulse</span>
                             </div>
-                            <div class="x-more-menu">•••</div>
+                            <div class="text-[#71767b] font-bold text-xs cursor-pointer">•••</div>
                         </div>
 
-                        <div class="x-card-body">
-                            <p id="x-tweet-preview-text" class="x-tweet-text">
-                                <!-- Live text preview goes here -->
-                            </p>
+                        <div class="text-sm md:text-[15px] leading-relaxed break-words">
+                            <p id="x-tweet-preview-text" class="whitespace-pre-wrap mb-3"></p>
                             
-                            <!-- Fake link preview card inside mockup -->
-                            <div class="x-link-preview">
-                                <div class="x-link-img">
-                                    <div class="bq-logo-large">
-                                        <svg viewBox="0 0 24 24" width="36" height="36">
+                            <!-- Link Preview card -->
+                            <div class="border border-[#2f3336] rounded-xl overflow-hidden mt-3 bg-black hover:bg-white/5 cursor-pointer transition-all duration-200">
+                                <div class="bg-gradient-to-br from-slate-900 to-slate-950 h-[100px] md:h-[120px] flex flex-col items-center justify-center gap-2 border-b border-[#2f3336] text-[#71767b] text-[10px] md:text-xs">
+                                    <div class="bg-white/10 border border-white/20 p-2.5 rounded-full flex items-center justify-center">
+                                        <svg viewBox="0 0 24 24" width="30" height="30">
                                             <path fill="#ffffff" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                                         </svg>
                                     </div>
                                     <span>Google Cloud Feed</span>
                                 </div>
-                                <div class="x-link-info">
-                                    <span class="x-link-domain">docs.cloud.google.com</span>
-                                    <span class="x-link-title">BigQuery - Release notes | Google Cloud</span>
-                                    <span class="x-link-desc">Review BigQuery updates, new features, announcements, deprecations, and bug fixes.</span>
+                                <div class="p-3 flex flex-col gap-1">
+                                    <span class="text-[#71767b] text-xs font-normal">docs.cloud.google.com</span>
+                                    <span class="font-semibold text-xs md:text-sm text-[#e7e9ea] truncate">BigQuery - Release notes | Google Cloud</span>
+                                    <span class="text-[#71767b] text-xs leading-snug line-clamp-2">Review BigQuery updates, new features, announcements, deprecations, and bug fixes.</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="x-card-footer">
-                            <span class="x-time" id="x-tweet-time">11:15 AM · Jun 24, 2026</span>
-                            <span class="x-stats">· <strong>1.2K</strong> Views</span>
+                        <div class="flex gap-2 text-xs text-[#71767b] py-3 border-b border-[#2f3336] mt-4">
+                            <span id="x-tweet-time"></span>
+                            <span>·</span>
+                            <span><strong>1.2K</strong> Views</span>
                         </div>
                         
-                        <div class="x-card-actions">
-                            <span class="x-action" title="Reply"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.246c4.42 0 8.004 3.58 8.004 8 0 4.42-3.584 8-8.004 8h-4.246c-.457-.005-.907-.06-1.349-.16l-3.32 2.82c-.6.51-1.53-.02-1.42-.8l.45-3.23c-2.31-1.35-3.72-3.8-3.72-6.63zm8.005-6c-3.317 0-6.004 2.69-6.004 6 0 2.3 1.25 4.38 3.253 5.43.34.18.52.54.47.92l-.32 2.3 2.37-2.02c.26-.22.6-.32.94-.3h3.535c3.317 0 6.004-2.69 6.004-6s-2.687-6-6.004-6h-4.246z"/></svg></span>
-                            <span class="x-action" title="Repost"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4.5 3.88l4.432 4.14-1.364 1.46L4.5 6.55V17c0 1.1.9 2 2 2h4v2H6.5c-2.21 0-4-1.79-4-4V6.55L.932 9.48-.432 8.02 4.5 3.88zM22.5 17c0 2.21-1.79 4-4 4h-4v-2h4c1.1 0 2-.9 2-2V7.45l-1.932 2.93-1.364-1.46L19.5 3.88l4.432 4.14-1.364 1.46L22.5 7.45V17z"/></svg></span>
-                            <span class="x-action" title="Like"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.725c-1.847 0-3.404 1.704-3.404 3.753 0 5.168 6.16 10.839 8.05 11.13 1.89-.292 8.05-5.963 8.05-11.13 0-2.05-1.557-3.753-3.404-3.753-1.73 0-3.005 1.73-3.644 2.94-.093.175-.27.284-.468.285-.198 0-.376-.108-.47-.283-.637-1.21-1.91-2.94-3.64-2.94z"/></svg></span>
-                            <span class="x-action" title="Bookmark"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v16.94c0 .54-.62.85-1.07.53L12 17.51l-6.93 4.46c-.45.29-1.07-.02-1.07-.53V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-3.87 6 3.87V4.5c0-.28-.224-.5-.5-.5h-11z"/></svg></span>
+                        <div class="flex justify-between pt-3 text-[#71767b]">
+                            <span class="p-2 hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 rounded-full cursor-pointer transition-all"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.246c4.42 0 8.004 3.58 8.004 8 0 4.42-3.584 8-8.004 8h-4.246c-.457-.005-.907-.06-1.349-.16l-3.32 2.82c-.6.51-1.53-.02-1.42-.8l.45-3.23c-2.31-1.35-3.72-3.8-3.72-6.63zm8.005-6c-3.317 0-6.004 2.69-6.004 6 0 2.3 1.25 4.38 3.253 5.43.34.18.52.54.47.92l-.32 2.3 2.37-2.02c.26-.22.6-.32.94-.3h3.535c3.317 0 6.004-2.69 6.004-6s-2.687-6-6.004-6h-4.246z"/></svg></span>
+                            <span class="p-2 hover:text-[#00ba7c] hover:bg-[#00ba7c]/10 rounded-full cursor-pointer transition-all"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4.5 3.88l4.432 4.14-1.364 1.46L4.5 6.55V17c0 1.1.9 2 2 2h4v2H6.5c-2.21 0-4-1.79-4-4V6.55L.932 9.48-.432 8.02 4.5 3.88zM22.5 17c0 2.21-1.79 4-4 4h-4v-2h4c1.1 0 2-.9 2-2V7.45l-1.932 2.93-1.364-1.46L19.5 3.88l4.432 4.14-1.364 1.46L22.5 7.45V17z"/></svg></span>
+                            <span class="p-2 hover:text-[#f91880] hover:bg-[#f91880]/10 rounded-full cursor-pointer transition-all"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12zM7.354 4.725c-1.847 0-3.404 1.704-3.404 3.753 0 5.168 6.16 10.839 8.05 11.13 1.89-.292 8.05-5.963 8.05-11.13 0-2.05-1.557-3.753-3.404-3.753-1.73 0-3.005 1.73-3.644 2.94-.093.175-.27.284-.468.285-.198 0-.376-.108-.47-.283-.637-1.21-1.91-2.94-3.64-2.94z"/></svg></span>
+                            <span class="p-2 hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 rounded-full cursor-pointer transition-all"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v16.94c0 .54-.62.85-1.07.53L12 17.51l-6.93 4.46c-.45.29-1.07-.02-1.07-.53V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-3.87 6 3.87V4.5c0-.28-.224-.5-.5-.5h-11z"/></svg></span>
                         </div>
                     </div>
 
-                    <!-- Composer Editor controls -->
-                    <div class="composer-controls">
-                        <label for="tweet-textarea">Customize Tweet Text:</label>
-                        <textarea id="tweet-textarea" rows="5" maxlength="500" placeholder="What's happening?"></textarea>
+                    <!-- Editor Controls -->
+                    <div class="flex flex-col gap-3">
+                        <label for="tweet-textarea" class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Customize Tweet Text:</label>
+                        <textarea id="tweet-textarea" rows="4" maxlength="500" placeholder="What's happening?" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm md:text-base focus:border-x-blue focus:ring-1 focus:ring-x-blue/30 transition-all duration-200 resize-y"></textarea>
                         
-                        <div class="composer-status">
-                            <button id="auto-fit-btn" class="btn-link hidden" title="Trim draft back to 280 characters automatically">Auto-Fit Text</button>
-                            <span id="char-counter" class="char-counter">0 / 280</span>
-                            <div class="progress-ring-container">
-                                <svg class="progress-ring" width="24" height="24">
-                                    <circle class="progress-ring__circle-bg" stroke="#1f2937" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" />
-                                    <circle id="char-progress" class="progress-ring__circle" stroke="#1d9bf0" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" />
-                                </svg>
+                        <div class="flex justify-between items-center gap-3 mt-1">
+                            <!-- Auto-Fit Link Button -->
+                            <button id="auto-fit-btn" class="text-x-blue hover:text-x-blue-hover text-xs font-bold hover:underline cursor-pointer hidden" title="Trim draft back to 280 characters automatically">Auto-Fit Text</button>
+                            
+                            <div class="flex items-center gap-2 ml-auto">
+                                <span id="char-counter" class="text-xs font-mono text-slate-400 dark:text-slate-500">0 / 280</span>
+                                <div class="flex items-center">
+                                    <svg class="progress-ring rotate-[-90deg]" width="24" height="24">
+                                        <circle class="stroke-slate-200 dark:stroke-slate-800" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" />
+                                        <circle id="char-progress" class="stroke-x-blue transition-all" stroke-width="2" fill="transparent" r="9" cx="12" cy="12" style="stroke-dasharray: 56.54; stroke-dashoffset: 56.54;" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="composer-actions">
-                            <button id="tweet-btn" class="btn btn-tweet">
-                                <svg class="x-logo-small" viewBox="0 0 24 24" width="14" height="14">
+                        <!-- Post Trigger -->
+                        <div class="mt-2">
+                            <button id="tweet-btn" class="flex items-center justify-center gap-2.5 p-3.5 bg-x-blue hover:bg-x-blue-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-x-blue font-bold text-white text-sm md:text-base rounded-xl cursor-pointer w-full shadow-lg shadow-x-blue/20 hover:shadow-x-blue/30 transition-all duration-200">
+                                <svg class="text-white" viewBox="0 0 24 24" width="16" height="16">
                                     <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                 </svg>
                                 <span>Post to X / Twitter</span>

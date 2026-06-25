@@ -49,7 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Setup & Persistent Check
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
+        document.documentElement.classList.remove('dark');
+        themeIconDark.classList.remove('hidden');
+        themeIconLight.classList.add('hidden');
+    } else {
+        document.documentElement.classList.add('dark');
         themeIconDark.classList.add('hidden');
         themeIconLight.classList.remove('hidden');
     }
@@ -66,14 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
     autoFitBtn.addEventListener('click', autoFitTweet);
 
     themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-        const isLight = document.body.classList.contains('light-theme');
-        if (isLight) {
-            localStorage.setItem('theme', 'light');
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+            localStorage.setItem('theme', 'dark');
             themeIconDark.classList.add('hidden');
             themeIconLight.classList.remove('hidden');
         } else {
-            localStorage.setItem('theme', 'dark');
+            localStorage.setItem('theme', 'light');
             themeIconDark.classList.remove('hidden');
             themeIconLight.classList.add('hidden');
         }
@@ -180,30 +184,32 @@ function renderTimeline() {
 
         // Create Timeline Node
         const node = document.createElement('div');
-        node.className = 'timeline-node';
+        node.className = 'relative mb-10';
 
         // Date Marker
         const marker = document.createElement('div');
-        marker.className = 'timeline-date-marker';
+        marker.className = 'absolute left-[-2.5rem] flex items-center gap-3 z-10';
         marker.innerHTML = `
-            <span class="date-bullet"></span>
-            <span class="date-text">${entry.date}</span>
+            <span class="w-[14px] h-[14px] rounded-full bg-slate-50 dark:bg-slate-950 border-[3px] border-google-blue shadow-[0_0_8px_rgba(66,133,244,0.5)] inline-block"></span>
+            <span class="text-xs font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 px-2.5 py-0.5 rounded">${entry.date}</span>
         `;
         node.appendChild(marker);
 
         // Cards list
         const cardsContainer = document.createElement('div');
-        cardsContainer.className = 'timeline-cards';
+        cardsContainer.className = 'pt-6 flex flex-col gap-4';
 
         filteredUpdates.forEach(update => {
             const card = document.createElement('div');
-            card.className = 'note-card';
-            card.dataset.id = update.id;
             
             // Highlight selected card
-            if (selectedNote && selectedNote.id === update.id) {
-                card.classList.add('selected');
-            }
+            const isSelected = selectedNote && selectedNote.id === update.id;
+            const borderClass = isSelected 
+                ? 'border-google-blue dark:border-google-blue bg-blue-500/5 dark:bg-blue-500/10 shadow-[0_0_20px_rgba(66,133,244,0.15)]' 
+                : 'border-slate-200 dark:border-slate-900 bg-white/60 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-800 hover:shadow-md';
+
+            card.className = `note-card p-5 border rounded-xl cursor-pointer transition-all duration-300 relative overflow-hidden focus:outline-none ${borderClass}`;
+            card.dataset.id = update.id;
 
             // Keyboard accessibility attributes
             card.setAttribute('tabindex', '0');
@@ -214,24 +220,24 @@ function renderTimeline() {
             const badgeClass = getBadgeClass(update.type);
 
             card.innerHTML = `
-                <div class="card-header">
-                    <span class="badge ${badgeClass}">${update.type}</span>
-                    <div class="card-header-actions">
-                        <button class="btn-card-action btn-copy" title="Copy plain text to clipboard">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${badgeClass}">${update.type}</span>
+                    <div class="card-header-actions flex items-center gap-3">
+                        <button class="btn-copy text-[11px] font-bold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center gap-1.5 p-1 px-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-md transition-all cursor-pointer" title="Copy plain text to clipboard">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
                                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                             </svg>
                             <span class="action-text">Copy</span>
                         </button>
-                        <div class="card-actions-hint">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <div class="card-actions-hint text-[11px] font-bold text-slate-400 dark:text-slate-600 flex items-center gap-1">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" class="text-slate-400 dark:text-slate-600">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                             </svg>
-                            <span>${selectedNote && selectedNote.id === update.id ? 'Selected' : 'Select to Tweet'}</span>
+                            <span>${isSelected ? 'Selected' : 'Select to Tweet'}</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body text-slate-700 dark:text-slate-300 text-sm md:text-[14px] leading-relaxed">
                     ${update.html}
                 </div>
             `;
@@ -280,14 +286,14 @@ function renderTimeline() {
     }
 }
 
-// Helpers for badges
+// Helpers for badges (Tailwind CSS badges)
 function getBadgeClass(type) {
     const t = type.toLowerCase();
-    if (t.includes('feature')) return 'badge-feature';
-    if (t.includes('issue')) return 'badge-issue';
-    if (t.includes('announcement')) return 'badge-announcement';
-    if (t.includes('deprecation')) return 'badge-deprecation';
-    return 'badge-update';
+    if (t.includes('feature')) return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
+    if (t.includes('issue')) return 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20';
+    if (t.includes('announcement')) return 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20';
+    if (t.includes('deprecation')) return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
+    return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20';
 }
 
 // Select an update to compose tweet
@@ -296,13 +302,16 @@ function selectNote(update, entry) {
     
     // Highlight Card
     document.querySelectorAll('.note-card').forEach(c => {
-        if (c.dataset.id === update.id) {
-            c.classList.add('selected');
-            c.querySelector('.card-actions-hint span').textContent = 'Selected';
+        const isSel = c.dataset.id === update.id;
+        const hintSpan = c.querySelector('.card-actions-hint span');
+        if (hintSpan) hintSpan.textContent = isSel ? 'Selected' : 'Select to Tweet';
+
+        if (isSel) {
+            c.classList.add('border-google-blue', 'dark:border-google-blue', 'bg-blue-500/5', 'dark:bg-blue-500/10', 'shadow-[0_0_20px_rgba(66,133,244,0.15)]');
+            c.classList.remove('border-slate-200', 'dark:border-slate-900', 'bg-white/60', 'dark:bg-slate-900/40', 'hover:border-slate-300', 'dark:hover:border-slate-800', 'hover:shadow-md');
         } else {
-            c.classList.remove('selected');
-            const hint = c.querySelector('.card-actions-hint span');
-            if (hint) hint.textContent = 'Select to Tweet';
+            c.classList.remove('border-google-blue', 'dark:border-google-blue', 'bg-blue-500/5', 'dark:bg-blue-500/10', 'shadow-[0_0_20px_rgba(66,133,244,0.15)]');
+            c.classList.add('border-slate-200', 'dark:border-slate-900', 'bg-white/60', 'dark:bg-slate-900/40', 'hover:border-slate-300', 'dark:hover:border-slate-800', 'hover:shadow-md');
         }
     });
 
@@ -334,7 +343,8 @@ function selectNote(update, entry) {
 function deselectNote() {
     selectedNote = null;
     document.querySelectorAll('.note-card').forEach(c => {
-        c.classList.remove('selected');
+        c.classList.remove('border-google-blue', 'dark:border-google-blue', 'bg-blue-500/5', 'dark:bg-blue-500/10', 'shadow-[0_0_20px_rgba(66,133,244,0.15)]');
+        c.classList.add('border-slate-200', 'dark:border-slate-900', 'bg-white/60', 'dark:bg-slate-900/40', 'hover:border-slate-300', 'dark:hover:border-slate-800', 'hover:shadow-md');
         const hint = c.querySelector('.card-actions-hint span');
         if (hint) hint.textContent = 'Select to Tweet';
     });
