@@ -20,6 +20,12 @@
     --x-blue: #1d9bf0;
     --x-blue-hover: #1a8cd8;
     
+    /* Twitter / X Mockup Variables */
+    --x-bg: #000000;
+    --x-border: #2f3336;
+    --x-text: #e7e9ea;
+    --x-text-muted: #71767b;
+    
     /* Badge Colors */
     --badge-feature-bg: rgba(52, 168, 83, 0.1);
     --badge-feature-text: #34d399;
@@ -51,6 +57,26 @@
     /* Transitions */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light-theme {
+    --bg-dark: #f0f4f8;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(255, 255, 255, 0.98);
+    --bg-composer: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(66, 133, 244, 0.4);
+    --border-active: #4285f4;
+    
+    --text-main: #1f2937;
+    --text-muted: #4b5563;
+    --text-dark: #8c96a3;
+    
+    /* Twitter / X Mockup Variables (Light mode overrides) */
+    --x-bg: #ffffff;
+    --x-border: #eff3f4;
+    --x-text: #0f1419;
+    --x-text-muted: #536471;
 }
 
 /* Global Reset */
@@ -672,12 +698,13 @@ body {
 
 /* High Fidelity Twitter / X Card Mockup */
 .x-card-mockup {
-    background-color: #000000;
-    border: 1px solid #2f3336;
+    background-color: var(--x-bg);
+    border: 1px solid var(--x-border);
     border-radius: var(--radius-lg);
     padding: 1rem;
-    color: #e7e9ea;
+    color: var(--x-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .x-card-header {
@@ -700,16 +727,16 @@ body {
 .x-display-name {
     font-weight: 700;
     font-size: 0.95rem;
-    color: #e7e9ea;
+    color: var(--x-text);
 }
 
 .x-handle {
-    color: #71767b;
+    color: var(--x-text-muted);
     font-size: 0.85rem;
 }
 
 .x-more-menu {
-    color: #71767b;
+    color: var(--x-text-muted);
     cursor: pointer;
     font-size: 0.8rem;
 }
@@ -733,12 +760,12 @@ body {
 
 /* Fake link preview card inside mockup */
 .x-link-preview {
-    border: 1px solid #2f3336;
+    border: 1px solid var(--x-border);
     border-radius: var(--radius-lg);
     overflow: hidden;
     margin-top: 0.75rem;
-    background-color: #000000;
-    transition: background-color var(--transition-fast);
+    background-color: var(--x-bg);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .x-link-preview:hover {
@@ -753,8 +780,8 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-bottom: 1px solid #2f3336;
-    color: #71767b;
+    border-bottom: 1px solid var(--x-border);
+    color: var(--x-text-muted);
     font-size: 0.75rem;
 }
 
@@ -776,7 +803,7 @@ body {
 }
 
 .x-link-domain {
-    color: #71767b;
+    color: var(--x-text-muted);
     font-size: 0.8rem;
     text-transform: lowercase;
 }
@@ -784,14 +811,14 @@ body {
 .x-link-title {
     font-weight: 600;
     font-size: 0.9rem;
-    color: #e7e9ea;
+    color: var(--x-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .x-link-desc {
-    color: #71767b;
+    color: var(--x-text-muted);
     font-size: 0.8rem;
     line-height: 1.4;
     display: -webkit-box;
@@ -804,9 +831,9 @@ body {
     display: flex;
     gap: 0.5rem;
     font-size: 0.85rem;
-    color: #71767b;
+    color: var(--x-text-muted);
     padding: 0.75rem 0;
-    border-bottom: 1px solid #2f3336;
+    border-bottom: 1px solid var(--x-border);
     margin-top: 0.75rem;
 }
 
@@ -814,7 +841,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding-top: 0.5rem;
-    color: #71767b;
+    color: var(--x-text-muted);
 }
 
 .x-action {

@@ -16,6 +16,9 @@ const timeline = document.getElementById('timeline');
 const filterChips = document.getElementById('filter-chips');
 const searchInput = document.getElementById('search-input');
 const exportCsvBtn = document.getElementById('export-csv-btn');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const themeIconDark = document.getElementById('theme-icon-dark');
+const themeIconLight = document.getElementById('theme-icon-light');
 
 const composerPlaceholder = document.getElementById('composer-placeholder');
 const composerActive = document.getElementById('composer-active');
@@ -42,6 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
     charProgress.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
     charProgress.style.strokeDashoffset = circleCircumference;
     
+    // Theme Setup & Persistent Check
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        themeIconDark.classList.add('hidden');
+        themeIconLight.classList.remove('hidden');
+    }
+
     // Bind Event Listeners
     refreshBtn.addEventListener('click', fetchReleaseNotes);
     retryBtn.addEventListener('click', fetchReleaseNotes);
@@ -51,6 +62,20 @@ document.addEventListener('DOMContentLoaded', () => {
     tweetTextarea.addEventListener('input', handleTweetTextChange);
     tweetBtn.addEventListener('click', publishTweet);
     exportCsvBtn.addEventListener('click', exportToCSV);
+
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        if (isLight) {
+            localStorage.setItem('theme', 'light');
+            themeIconDark.classList.add('hidden');
+            themeIconLight.classList.remove('hidden');
+        } else {
+            localStorage.setItem('theme', 'dark');
+            themeIconDark.classList.remove('hidden');
+            themeIconLight.classList.add('hidden');
+        }
+    });
 
     // Initial Fetch
     fetchReleaseNotes();
