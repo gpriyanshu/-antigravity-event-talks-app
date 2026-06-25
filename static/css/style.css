@@ -456,6 +456,39 @@ body {
     border-color: var(--badge-generic-border);
 }
 
+.card-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-card-action {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-card-action:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-card-action.copied {
+    color: var(--badge-feature-text);
+    background-color: var(--badge-feature-bg);
+    border-color: var(--badge-feature-border);
+}
+
 .card-actions-hint {
     font-size: 0.75rem;
     color: var(--text-dark);
